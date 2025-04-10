@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .quote-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>Anime Quotes</h1>
+<button id="fetchQuote">Fetch Quote</button>
+<div class="quote-container" id="quoteContainer" style="display: none;">
+    <p><strong>Content:</strong> <span id="content"></span></p>
+    <p><strong>Anime:</strong> <span id="anime"></span></p>
+    <p><strong>Character:</strong> <span id="character"></span></p>
+</div>
+<p class="error" id="errorMessage" style="display: none;"></p>
+
+<script>
+    document.getElementById('fetchQuote').addEventListener('click', () => {
+        const url = 'http://localhost:8081/workshop/07_Debugging/thirdparty.php?action=send';
+        const quoteContainer = document.getElementById('quoteContainer');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Reset visibility
+        quoteContainer.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.response.status === 'success') {
+                    const content = data.response.data.content;
+                    const anime = data.response.data.anime.name;
+                    const character = data.response.data.character.name;
+
+                    // Display the data
+                    document.getElementById('content').textContent = content;
+                    document.getElementById('anime').textContent = anime;
+                    document.getElementById('character').textContent = character;
+                    quoteContainer.style.display = 'block';
+                } else {
+                    throw new Error('Failed to fetch quote.');
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.style.display = 'block';
+            });
+    });
+</script>
+</body>
+</html>

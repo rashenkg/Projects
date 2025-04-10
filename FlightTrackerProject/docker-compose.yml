@@ -1,0 +1,48 @@
+version: '2'
+services:
+  debug:
+    image: phpstorm/php-71-apache-xdebug
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+
+  sftp:
+    image: phpstorm/sftp-server
+    ports:
+      - "2022:22"
+    volumes:
+      - /tmp:/home/jetbrains/upload
+    command: jetbrains:jetbrains:1001
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "33056:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+# Declare named volume under the 'volumes' section
+#root_password
+
+
+###CREATE TABLE users (
+#    id INT AUTO_INCREMENT PRIMARY KEY,  -- Auto-incrementing ID field
+#    name VARCHAR(255) NOT NULL,          -- Name field (required)
+#    email VARCHAR(255) NOT NULL UNIQUE   -- Email field (required and must be unique)
+#);
+
+#ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root_password';
+volumes:
+  mysql_data:
